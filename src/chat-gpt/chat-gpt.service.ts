@@ -36,16 +36,23 @@ export class ChatGptService {
 
 	async listModels() {
 		try {
-			const { data } = await this.openAiApi.listModels()
-			console.log(data)
+			const { data } = await this.openAiApi
+				.listModels()
+				.then(({ data }) => data)
 
 			return data
 		} catch (e) {
 			if (e.response) {
-				console.log(e.response.status)
-				console.log(e.response.data)
+				const {
+					status,
+					data: {
+						error: { message }
+					}
+				} = e.response
+
+				return { status, message }
 			} else {
-				console.log(e.message)
+				return e.message
 			}
 		}
 	}
@@ -69,7 +76,6 @@ export class ChatGptService {
 			}
 
 			const { data } = await this.openAiApi.createCompletion(params)
-			console.log(data)
 
 			if (data.choices.length) {
 				return data.choices
@@ -78,10 +84,16 @@ export class ChatGptService {
 			return data
 		} catch (e) {
 			if (e.response) {
-				console.log(e.response.status)
-				console.log(e.response.data)
+				const {
+					status,
+					data: {
+						error: { message }
+					}
+				} = e.response
+
+				return { status, message }
 			} else {
-				console.log(e.message)
+				return e.message
 			}
 		}
 	}
